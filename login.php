@@ -203,8 +203,18 @@
 				class="form-control" 
 				type="email" 
 				name="email" 
+				placeholder="Type a Valid email"
+				required />
+		</div>
+		<div class="input-container">
+			<input 
+				class="form-control" 
+				type="file" 
+				name="email" 
 				placeholder="Type a Valid email" />
 		</div>
+
+		
 		<input class="btn btn-success btn-block" name="signup" type="submit" value="Signup" />
 	</form>
 	<!-- End Signup Form -->
