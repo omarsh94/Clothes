@@ -33,7 +33,7 @@
 
 			// Select All Users Except Admin 
 
-			$stmt = $con->prepare("SELECT * FROM users WHERE GroupID != 1 $query ORDER BY UserID DESC");
+			$stmt = $con->prepare("SELECT * FROM users  $query ORDER BY UserID DESC");
 
 			// Execute The Statement
 
@@ -85,8 +85,21 @@
 													class='btn btn-info activate'>
 													<i class='fa fa-check'></i> Activate</a>";
 										}
-									echo "</td>";
-								echo "</tr>";
+										if ($row['GroupID'] == 0 & $row['RegStatus'] == 1) {
+											echo "<a 
+													href='members.php?do=MakeAdmin&userid=" . $row['UserID'] . "' 
+													class='btn btn-warning activate'>
+													<i class='fa fa-check'></i> Make Admin</a>";
+										}
+
+										if ($row['GroupID'] == 1 & $row['RegStatus'] == 1) {
+											echo "<a 
+													href='members.php?do=DeleteAdmin&userid=" . $row['UserID'] . "' 
+													class='btn btn-warning activate'>
+													<i class='fa fa-check'></i> Delete Admin</a>";
+										}
+										
+										 
 							}
 						?>
 						<tr>
@@ -568,6 +581,82 @@
 			echo '</div>';
 
 		}
+
+		elseif ($do == 'MakeAdmin') {
+
+			echo "<h1 class='text-center'>Make Admin</h1>";
+			echo "<div class='container'>";
+
+				// Check If Get Request userid Is Numeric & Get The Integer Value Of It
+
+				$userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
+
+				// Select All Data Depend On This ID
+
+				$check = checkItem('userid', 'users', $userid);
+
+				// If There's Such ID Show The Form
+
+				if ($check > 0) {
+
+					$stmt = $con->prepare("UPDATE users SET GroupID = 1 WHERE UserID = ?");
+
+					$stmt->execute(array($userid));
+
+					$theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . ' Record Updated</div>';
+
+					redirectHome($theMsg);
+
+				} else {
+
+					$theMsg = '<div class="alert alert-danger">This ID is Not Exist</div>';
+
+					redirectHome($theMsg);
+
+				}
+
+			echo '</div>';
+
+		}
+
+		elseif ($do == 'DeleteAdmin') {
+
+			echo "<h1 class='text-center'>Delete Admin</h1>";
+			echo "<div class='container'>";
+
+				// Check If Get Request userid Is Numeric & Get The Integer Value Of It
+
+				$userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
+
+				// Select All Data Depend On This ID
+
+				$check = checkItem('userid', 'users', $userid);
+
+				// If There's Such ID Show The Form
+
+				if ($check > 0) {
+
+					$stmt = $con->prepare("UPDATE users SET GroupID = 0 WHERE UserID = ?");
+
+					$stmt->execute(array($userid));
+
+					$theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . ' Record Updated</div>';
+
+					redirectHome($theMsg);
+
+				} else {
+
+					$theMsg = '<div class="alert alert-danger">This ID is Not Exist</div>';
+
+					redirectHome($theMsg);
+
+				}
+
+			echo '</div>';
+
+		}
+
+
 
 		include $tpl . 'footer.php';
 
